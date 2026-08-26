@@ -1,0 +1,11 @@
+mobile_director/auth.db
+mobile_director/jobs.json
+mobile_director/.thumbs/
+mobile_director/__pycache__/
+mobile_director/video_test_frame.png
+*.pyc
+.env
+workflows/*.json
+!workflows/README.md
+mobile_director/web/help-media/*
+!mobile_director/web/help-media/.gitkeep
