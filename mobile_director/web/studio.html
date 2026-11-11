@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Theodore Director · 新版工作台</title>
+  <link rel="stylesheet" href="/studio-v2.css">
+  <link rel="stylesheet" href="/acceptance-ui.css">
+</head>
+<body>
+  <header class="appbar">
+    <button class="mobile-nav-toggle secondary" id="mobileNavToggle" type="button" aria-label="打开主导航" aria-controls="mainSidebar" aria-expanded="false">☰</button>
+    <a class="brand" href="/studio.html"><span class="brand-mark">T</span><span>Theodore Director</span><em>Preview</em></a>
+    <div class="project-switcher">
+      <span class="eyebrow">当前空间</span>
+      <button id="workspaceButton" type="button"><b id="workspaceName">个人工作空间</b><span>⌄</span></button>
+    </div>
+    <div class="app-actions">
+      <span class="sync-state" id="syncState"><i></i> 本地服务</span>
+      <button class="primary" id="newProject" type="button">＋ 新建项目</button>
+      <button class="avatar" id="avatar" title="当前账号">—</button>
+    </div>
+  </header>
+  <button class="nav-backdrop" id="navBackdrop" type="button" aria-label="关闭主导航" hidden></button>
+
+  <div class="shell">
+    <aside class="sidebar" id="mainSidebar">
+      <nav id="mainNav" aria-label="主导航">
+        <p>制作</p>
+        <button data-view="overview"><span>⌂</span>项目总览</button>
+        <button data-view="video"><span>影</span>视频编辑与生成</button>
+        <button data-view="image"><span>图</span>图片编辑与生成</button>
+        <button data-view="script"><span>文</span>文本编辑与生成</button>
+        <p>管理</p>
+        <button class="active" data-view="assets"><span>▦</span>素材管理 <b id="mediaCount">0</b></button>
+        <button data-view="tasks"><span>↻</span>任务与版本</button>
+        <button data-view="deliveries"><span>✓</span>成片与交付</button>
+        <p>发现</p>
+        <button data-view="discovery"><span>◎</span>共享素材库 <small>开放浏览</small></button>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="secondary mobile-nav-action" id="mobileNewProject" type="button">＋ 新建项目</button>
+        <a href="/assets.html"><span>◫</span>资产生成台</a>
+        <a href="/settings.html"><span>⚙</span>API 与账号设置</a>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <section class="workspace-head">
+        <div>
+          <p class="eyebrow" id="headEyebrow">统一素材目录</p>
+          <h1 id="headTitle">素材中心</h1>
+          <p id="headSubtitle">结果、上传与项目引用共享同一个媒体实体，不再复制文件。</p>
+        </div>
+        <div class="head-actions" id="headActions">
+          <button class="secondary" id="syncCatalog" type="button">↻ 扫描现有素材</button>
+          <button class="primary" id="openUpload" type="button">↑ 上传素材</button>
+        </div>
+      </section>
+
+      <nav class="mode-tabs asset-sections" id="assetSections" aria-label="素材管理分类" hidden>
+        <button class="secondary" data-view="assets">全部素材</button>
+        <button class="secondary" data-view="characters">人物与造型</button>
+        <button class="secondary" data-view="scenes">场景</button>
+        <button class="secondary" data-view="storyboard">分镜</button>
+      </nav>
+      <div id="assetView"><section class="toolbar">
+        <label class="search"><span>⌕</span><input id="search" placeholder="搜索人物、服饰、场景、角度、用途…"></label>
+        <button class="secondary" id="semanticSearch" type="button">✦ 语义检索</button>
+        <div class="filters" id="kindFilters">
+          <button class="active" data-kind="">全部</button>
+          <button data-kind="image">图片</button>
+          <button data-kind="video">视频</button>
+          <button data-kind="audio">音频</button>
+        </div>
+        <select id="projectFilter" aria-label="按项目筛选"><option value="">所有项目</option></select>
+        <button class="secondary" id="trashView" type="button">回收站</button>
+        <button class="icon-button" id="viewToggle" title="切换密度">▦</button>
+      </section>
+
+      <section class="bulk-toolbar" id="bulkToolbar" hidden aria-live="polite">
+        <b id="bulkCount">已选择 0 项</b>
+        <button class="secondary" id="selectLoaded" type="button">选择已加载</button>
+        <button class="secondary" id="clearSelection" type="button">清除选择</button>
+        <span class="bulk-spacer"></span>
+        <select id="bulkProject" aria-label="批量关联项目"><option value="">选择关联项目</option></select>
+        <button class="secondary" id="bulkLink" type="button">关联项目</button>
+        <button class="secondary" id="bulkTrash" type="button">移入回收站</button>
+        <button class="secondary" id="bulkRestore" type="button" hidden>恢复</button>
+        <button class="danger-button" id="bulkDelete" type="button" hidden>彻底删除</button>
+      </section>
+
+      <section class="content-state" id="contentState">
+        <div class="spinner"></div><p>正在读取统一素材目录…</p>
+      </section>
+      <section class="asset-grid" id="assetGrid" aria-live="polite"></section>
+      <footer class="result-footer"><span id="resultCount">0 项素材</span><button id="loadMore" hidden>加载更多</button></footer></div>
+      <section class="dynamic-view" id="dynamicView" hidden></section>
+    </main>
+
+    <aside class="inspector" id="inspector">
+      <div class="inspector-empty" id="inspectorEmpty">
+        <div>▧</div><h2>选择一项素材</h2><p>在这里查看归属、编辑 AI 检索描述，并关联到人物、场景或项目。</p>
+      </div>
+      <div class="inspector-content" id="inspectorContent" hidden>
+        <div class="inspector-title"><div><span class="eyebrow">素材详情</span><h2 id="detailName">—</h2></div><button id="closeInspector" title="关闭">×</button></div>
+        <div class="detail-preview" id="detailPreview"><span>预览</span><div class="watermark" id="watermark"></div></div>
+        <div class="detail-row"><span>媒体身份</span><code id="detailId">—</code></div>
+        <div class="detail-row"><span>来源</span><b id="detailSource">—</b></div>
+        <div class="detail-row"><span>文件大小</span><b id="detailSize">—</b></div>
+        <div class="classification-actions"><button class="secondary" id="renameMedia">修改显示名称</button><button class="secondary" id="trashMedia">移入回收站</button></div>
+        <button class="danger-button wide" id="deleteMedia" hidden>彻底删除</button>
+        <button class="secondary wide" id="fullPreview">完整预览 / 播放</button>
+        <section class="inspector-section">
+          <h3>标签 Tag</h3>
+          <div id="tagChips" class="tag-chips"></div>
+          <label>编辑标签<input id="mediaTags" placeholder="输入标签，用逗号分隔"></label>
+          <button class="primary wide" id="saveTags">保存标签</button>
+          <p class="microcopy">无需关联项目或 AI 归档，保存后即可关键词检索。</p>
+        </section>
+
+        <section class="inspector-section">
+          <div class="section-title"><h3>关联与复用</h3><span id="linkCount">0 个关联</span></div>
+          <div class="link-list" id="linkList"></div>
+          <label>关联到项目<select id="linkProject"><option value="">选择项目</option></select></label>
+          <button class="secondary wide" id="linkProjectButton">关联当前项目</button>
+          <button class="primary wide" id="promoteMedia">标记为可复用素材</button>
+          <button class="secondary wide" id="publishMedia" disabled>发布到开放素材库</button>
+          <p class="microcopy">只添加引用关系，不复制原始文件。</p>
+        </section>
+
+        <section class="inspector-section classification">
+          <div class="section-title"><h3>AI 检索描述</h3><span class="status-pill" id="classStatus">未分类</span></div>
+          <button class="secondary wide" id="autoClassify">✦ 使用我的 API 自动分类</button>
+          <label>显示标签<input id="fieldLabel" placeholder="如：林默 / 夜班制服 / 正面"></label>
+          <label>检索描述<textarea id="fieldCaption" rows="3" placeholder="这项素材是什么，适合在哪里使用"></textarea></label>
+          <label>适合用于<input id="fieldBest" placeholder="逗号分隔"></label>
+          <label>避免用于<input id="fieldAvoid" placeholder="逗号分隔"></label>
+          <label>使用注意<textarea id="fieldNotes" rows="2" placeholder="连续性、角度或服饰注意事项"></textarea></label>
+          <label>关键词<input id="fieldKeywords" placeholder="逗号分隔"></label>
+          <label class="toggle-row"><span><b>预览描述水印</b><small>仅界面叠加，不写入原文件</small></span><input id="watermarkToggle" type="checkbox" checked></label>
+          <div class="classification-actions"><button class="secondary" id="saveDraft" disabled>保存修改</button><button class="primary" id="archiveDraft" disabled>确认归档</button></div>
+        </section>
+      </div>
+    </aside>
+  </div>
+
+  <div class="modal" id="projectModal" hidden>
+    <form class="dialog" id="projectForm">
+      <div class="dialog-head"><div><span class="eyebrow">工作空间</span><h2>新建短剧项目</h2></div><button type="button" data-close>×</button></div>
+      <label>项目名称<input id="projectName" maxlength="80" required placeholder="例如：夜班列车"></label>
+      <label>项目说明<textarea id="projectDescription" rows="3" placeholder="可选，不要求预先整理完整"></textarea></label>
+      <label>默认画幅<select id="projectAspect"><option>16:9</option><option>9:16</option><option>1:1</option><option>4:3</option></select></label>
+      <div class="dialog-actions"><button type="button" class="secondary" data-close>取消</button><button class="primary" type="submit">创建项目</button></div>
+    </form>
+  </div>
+  <input id="uploadInput" type="file" accept="image/*,video/*,audio/*" multiple hidden>
+  <div class="asset-drawer" id="assetDrawer" hidden>
+    <div class="drawer-head"><div><span class="eyebrow">上下文素材选择</span><h2>选择生成参考</h2></div><button id="closeDrawer">×</button></div>
+    <label class="search"><span>⌕</span><input id="drawerSearch" placeholder="搜索全部可访问素材"></label>
+    <div class="drawer-grid" id="drawerGrid"></div>
+    <div class="drawer-footer"><span id="drawerSelectionCount">已选 0 项</span><button class="primary" id="confirmDrawer">使用所选素材</button></div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="/studio-v2.js"></script>
+  <script src="/studio-workflow.js"></script>
+</body>
+</html>
